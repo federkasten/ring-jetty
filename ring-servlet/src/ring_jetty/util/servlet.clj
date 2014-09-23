@@ -157,27 +157,27 @@
 
 (defn- do-nothing [& args])
 
+(defn- resolve-handle-fn
+  [handler key]
+  (if-let [f (get @(resolve handler) key nil)]
+    f
+    do-nothing))
+
 (defn- proxy-ws-adapter
-  [{:as handlers
-    :keys [on-connect on-error on-text on-close on-bytes]
-    :or {on-connect do-nothing
-         on-error do-nothing
-         on-text do-nothing
-         on-close do-nothing
-         on-bytes do-nothing}}]
+  [ws-handler]
   (proxy [WebSocketAdapter] []
     (onWebSocketConnect [^Session session]
       (proxy-super onWebSocketConnect session)
-      (@(resolve on-connect) this))
+      ((resolve-handle-fn ws-handler :on-connect) this))
     (onWebSocketError [^Throwable e]
-      (@(resolve on-error) this e))
+      ((resolve-handle-fn ws-handler :on-error) this e))
     (onWebSocketText [^String message]
-      (@(resolve on-text) this message))
+      ((resolve-handle-fn ws-handler :on-text) this message))
     (onWebSocketClose [statusCode ^String reason]
       (proxy-super onWebSocketClose statusCode reason)
-      (@(resolve on-close) this statusCode reason))
+      ((resolve-handle-fn ws-handler :on-close) this statusCode reason))
     (onWebSocketBinary [^bytes payload offset len]
-      (@(resolve on-bytes) this payload offset len))))
+      ((resolve-handle-fn ws-handler :on-bytes) this payload offset len))))
 
 (defn- reify-ws-creator
   [handlers]
