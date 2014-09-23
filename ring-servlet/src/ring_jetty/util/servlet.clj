@@ -1,5 +1,6 @@
-(ns ring.util.servlet
-  "Compatibility functions for turning a ring handler into a Java servlet."
+(ns ring-jetty.util.servlet
+  "Compatibility functions for turning a ring handler into a Java servlet.
+  Derived from ring.util.servlet"
   (:require [clojure.java.io :as io]
             [clojure.string :as string])
   (:import (java.io File InputStream FileInputStream)
@@ -151,3 +152,13 @@
       [servlet# request# response#]
       ((make-service-method ~handler)
          servlet# request# response#))))
+
+(defmacro defwsservice
+  ""
+  ([ws-context ws-max-idle-time]
+   `(defwsservice "-" ~ws-creator ~ws-max-idle-time))
+  ([prefix ws-context ws-max-idle-time]
+   `(defn ~(symbol (str prefix "configure"))
+      [factory#]
+      (.setIdleTimeout factory# ~ws-max-idle-time)
+      (.setCreator factory# (make-ws-creator ~ws-context)))))
