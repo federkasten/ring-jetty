@@ -6,7 +6,9 @@
   (:import (java.io File InputStream FileInputStream)
            (javax.servlet.http HttpServlet
                                HttpServletRequest
-                               HttpServletResponse)))
+                               HttpServletResponse)
+           (org.eclipse.jetty.websocket.servlet WebSocketCreator)
+           (org.eclipse.jetty.websocket.api WebSocketAdapter Session)))
 
 (defn- get-headers
   "Creates a name/value map of all the request headers."
@@ -153,12 +155,46 @@
       ((make-service-method ~handler)
          servlet# request# response#))))
 
+(defn- do-nothing [& args])
+
+(defn- proxy-ws-adapter
+  [{:as handlers
+    :keys [on-connect on-error on-text on-close on-bytes]
+    :or {on-connect do-nothing
+         on-error do-nothing
+         on-text do-nothing
+         on-close do-nothing
+         on-bytes do-nothing}}]
+  (proxy [WebSocketAdapter] []
+    (onWebSocketConnect [^Session session]
+      (proxy-super onWebSocketConnect session)
+      (@(resolve on-connect) this))
+    (onWebSocketError [^Throwable e]
+      (@(resolve on-error) this e))
+    (onWebSocketText [^String message]
+      (@(resolve on-text) this message))
+    (onWebSocketClose [statusCode ^String reason]
+      (proxy-super onWebSocketClose statusCode reason)
+      (@(resolve on-close) this statusCode reason))
+    (onWebSocketBinary [^bytes payload offset len]
+      (@(resolve on-bytes) this payload offset len))))
+
+(defn- reify-ws-creator
+  [handlers]
+  (reify WebSocketCreator
+    (createWebSocket [this _ _]
+      (proxy-ws-adapter handlers))))
+
+(defn make-ws-creator
+  [handlers]
+  (reify-ws-creator handlers))
+
 (defmacro defwsservice
   ""
-  ([ws-context ws-max-idle-time]
-   `(defwsservice "-" ~ws-creator ~ws-max-idle-time))
-  ([prefix ws-context ws-max-idle-time]
+  ([ws-handlers ws-max-idle-time]
+   `(defwsservice "-" ~ws-handlers ~ws-max-idle-time))
+  ([prefix ws-handlers ws-max-idle-time]
    `(defn ~(symbol (str prefix "configure"))
       [factory#]
       (.setIdleTimeout factory# ~ws-max-idle-time)
-      (.setCreator factory# (make-ws-creator ~ws-context)))))
+      (.setCreator factory# (make-ws-creator ~ws-handlers)))))
