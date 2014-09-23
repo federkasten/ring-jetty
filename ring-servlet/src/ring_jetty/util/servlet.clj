@@ -159,7 +159,7 @@
 
 (defn- resolve-handle-fn
   [handler key]
-  (if-let [f (get @(resolve handler) key nil)]
+  (if-let [f (get handler key nil)]
     f
     do-nothing))
 
@@ -195,6 +195,7 @@
    `(defwsservice "-" ~ws-handlers ~ws-max-idle-time))
   ([prefix ws-handlers ws-max-idle-time]
    `(defn ~(symbol (str prefix "configure"))
-      [factory#]
-      (.setIdleTimeout factory# ~ws-max-idle-time)
+      [servlet# factory#]
+      (-> (.getPolicy factory#)
+          (.setIdleTimeout ~ws-max-idle-time))
       (.setCreator factory# (make-ws-creator ~ws-handlers)))))
