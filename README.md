@@ -1,66 +1,17 @@
-# Ring
+# Ring-Jetty
 
-[![Build Status](https://secure.travis-ci.org/ring-clojure/ring.png)](http://travis-ci.org/ring-clojure/ring)
+A fork of [ring](https://github.com/ring-clojure/ring) library, which supports websocket and spdy, but heavily depends on Jetty.
 
-Ring is a Clojure web applications library inspired by Python's WSGI
-and Ruby's Rack. By abstracting the details of HTTP into a simple,
-unified API, Ring allows web applications to be constructed of modular
-components that can be shared among a variety of applications, web
-servers, and web frameworks.
+This project is WIP, may contains some bugs.
 
-The [SPEC][1] file at the root of this distribution provides a
-complete description of the Ring interface.
+# Usage
 
-[1]: https://github.com/ring-clojure/ring/blob/master/SPEC
+See example <https://github.com/federkasten/ring-websocket-example> or original Ring document <https://github.com/ring-clojure/ring>.
 
-## Upgrade Notice
+# License
 
-From version 1.2.1 onward, the ring/ring-core package no longer comes
-with the `javax.servlet/servlet-api` package as a dependency (see
-issue [#89][2]).
+Copyright 2009-2014 Mark McGranaghan, James Reeves & contributors.
 
-If you are using the `ring/ring-core` namespace on its own, you may
-run into errors when executing tests or running alternative adapters.
-To resolve this, include the following dependency in your dev profile:
-
-    [javax.servlet/servlet-api "2.5"]
-
-[2]: https://github.com/ring-clojure/ring/pull/89
-
-## Libraries
-
-* ring-core - essential functions for handling parameters, cookies and more
-* ring-devel - functions for developing and debugging Ring applications
-* ring-servlet - construct Java servlets from Ring handlers
-* ring-jetty-adapter - a Ring adapter that uses the Jetty webserver
-
-## Installation
-
-To include one of the above libraries, for example `ring-core`, add
-the following to your `:dependencies`:
-
-    [ring/ring-core "1.3.1"]
-
-To include all of them:
-
-    [ring "1.3.1"]
-
-## Documentation
-
-* [Wiki](https://github.com/ring-clojure/ring/wiki)
-* [API docs](http://ring-clojure.github.com/ring)
-
-## Community
-
-* [Google group](http://groups.google.com/group/ring-clojure)
-
-## Thanks
-
-This project borrows heavily from Ruby's Rack and Python's WSGI;
-thanks to those communities for their work.
-
-## License
-
-Copyright © 2009-2014 Mark McGranaghan, James Reeves & contributors.
+Copyright 2014 Takashi AOKI.
 
 Released under the MIT license.

@@ -1,4 +1,7 @@
 (ns ring-jetty.util.ws
+  "A Ring websocket utilities.
+
+  Derived from info.sunng/ring-jetty9-adapter"
   (:import (org.eclipse.jetty.websocket.api WebSocketAdapter)
            (java.nio ByteBuffer)
            (clojure.lang IFn)))

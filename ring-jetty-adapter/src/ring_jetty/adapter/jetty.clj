@@ -1,8 +1,8 @@
 (ns ring-jetty.adapter.jetty
-  "A Ring adapter that uses the Jetty 7 embedded web server.
+  "A Ring adapter that uses the Jetty 9 embedded web server.
 
   Adapters are used to convert Ring handlers into running web servers.
-  Derived from ring.adapter.jetty"
+  Derived from ring.adapter.jetty and info.sunng/ring-jetty9-adapter"
   (:import (org.eclipse.jetty.server Handler Server Request ServerConnector HttpConfiguration HttpConnectionFactory SslConnectionFactory ConnectionFactory)
            (org.eclipse.jetty.server.handler HandlerCollection AbstractHandler ContextHandler HandlerList)
            (org.eclipse.jetty.util.thread QueuedThreadPool ScheduledExecutorScheduler)

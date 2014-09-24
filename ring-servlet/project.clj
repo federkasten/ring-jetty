@@ -1,6 +1,6 @@
 (defproject ring-jetty/ring-servlet "0.1.0-SNAPSHOT"
   :description "Ring servlet utilities based on jetty."
-  :url ""
+  :url "https://github.com/federkasten/ring-jetty"
   :scm {:dir ".."}
   :license {:name "The MIT License"
             :url "http://opensource.org/licenses/MIT"}
