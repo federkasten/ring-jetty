@@ -197,7 +197,6 @@
   :websockets     - a map from context path to a map of handler fns"
   [handler options]
   (let [^Server s (create-server (dissoc options :configurator))
-        ;; ^QueuedThreadPool p (QueuedThreadPool. ^Integer (options :max-threads 50))
         ring-app-handler (proxy-handler handler)
         ws-handlers (map (fn [[context-path handler]]
                            (doto (ContextHandler.)
@@ -207,15 +206,7 @@
         contexts (doto (HandlerList.)
                    (.setHandlers
                     (into-array Handler (reverse (conj ws-handlers ring-app-handler)))))]
-    ;; (.setMinThreads p (options :min-threads 8))
-    ;; (when-let [max-queued (:max-queued options)]
-    ;;   (.setMaxQueued p max-queued))
-    ;; (when (:daemon? options false)
-    ;;   (.setDaemon p true))
-    (doto s
-      (.setHandler contexts)
-      ;; (.setThreadPool p)
-      )
+    (.setHandler s contexts)
     (when-let [configurator (:configurator options)]
       (configurator s))
     (.start s)
