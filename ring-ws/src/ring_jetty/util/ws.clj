@@ -19,23 +19,28 @@
 
   (Class/forName "[B")
   (-send! [ba ws]
-    (-send! (ByteBuffer/wrap ba) ws))
+    (when-not (nil? ws)
+      (-send! (ByteBuffer/wrap ba) ws)))
 
   ByteBuffer
   (-send! [bb ws]
-    (-> ws .getRemote (.sendBytes ^ByteBuffer bb)))
+    (when-not (nil? ws)
+      (-> ws .getRemote (.sendBytes ^ByteBuffer bb))))
 
   String
   (-send! [s ws]
-    (-> ws .getRemote (.sendString ^String s)))
+    (when-not (nil? ws)
+      (-> ws .getRemote (.sendString ^String s))))
 
   IFn
   (-send! [f ws]
-    (-> ws .getRemote f))
+    (when-not (nil? ws)
+      (-> ws .getRemote f)))
 
   Object
   (-send! [this ws]
-    (-> ws .getRemote (.sendString (str this))))
+    (when-not (nil? ws)
+      (-> ws .getRemote (.sendString (str this)))))
 
   ;; "nil" could PING?
   ;; nil
