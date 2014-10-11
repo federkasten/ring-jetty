@@ -6,6 +6,11 @@
            (java.nio ByteBuffer)
            (clojure.lang IFn)))
 
+(defn- ws-available?
+  [^WebSocketAdapter ws]
+  (not (or (nil? ws)
+           (nil? (.getRemote ws)))))
+
 (defprotocol WebSocketProtocol
   (send! [this msg])
   (close! [this])
@@ -19,27 +24,27 @@
 
   (Class/forName "[B")
   (-send! [ba ws]
-    (when-not (nil? ws)
+    (when (ws-available? ws)
       (-send! (ByteBuffer/wrap ba) ws)))
 
   ByteBuffer
   (-send! [bb ws]
-    (when-not (nil? ws)
+    (when (ws-available? ws)
       (-> ws .getRemote (.sendBytes ^ByteBuffer bb))))
 
   String
   (-send! [s ws]
-    (when-not (nil? ws)
+    (when (ws-available? ws)
       (-> ws .getRemote (.sendString ^String s))))
 
   IFn
   (-send! [f ws]
-    (when-not (nil? ws)
+    (when (ws-available? ws)
       (-> ws .getRemote f)))
 
   Object
   (-send! [this ws]
-    (when-not (nil? ws)
+    (when (ws-available? ws)
       (-> ws .getRemote (.sendString (str this)))))
 
   ;; "nil" could PING?
